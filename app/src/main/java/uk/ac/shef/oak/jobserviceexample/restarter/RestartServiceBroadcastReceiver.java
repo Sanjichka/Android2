@@ -73,8 +73,8 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
         JobInfo jobInfo = new JobInfo.Builder(1, componentName)
                 // setOverrideDeadline runs it immediately - you must have at least one constraint
                 // https://stackoverflow.com/questions/51064731/firing-jobservice-without-constraints
-                .setOverrideDeadline(0)
-                .setPersisted(true).build();
+                .setOverrideDeadline(0) //po kolku vreme i da ne se ispolneti uslovite, pushti
+                .setPersisted(true).build(); // napravi go prezhivliv na reboot
         jobScheduler.schedule(jobInfo);
     }
 

@@ -37,6 +37,9 @@ public class Service extends android.app.Service {
         mCurrentService = this;
     }
 
+    // start the timer which will print the value of the counter every second
+    // (note: it returns START_STICKY - that is used to tell Android to try not to
+    // kill the service when resources are scarce: note Android can ignore this)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -92,6 +95,7 @@ public class Service extends android.app.Service {
     }
 
 
+    // restarts the service when killed
     @Override
     public void onDestroy() {
         super.onDestroy();
