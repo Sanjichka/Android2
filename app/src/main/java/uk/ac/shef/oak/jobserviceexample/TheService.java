@@ -5,7 +5,10 @@
 package uk.ac.shef.oak.jobserviceexample;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -17,13 +20,13 @@ import java.util.TimerTask;
 
 import uk.ac.shef.oak.jobserviceexample.utilities.Notification;
 
-public class Service extends android.app.Service {
+public class TheService extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
     private static String TAG = "Service";
-    private static Service mCurrentService;
+    private static TheService mCurrentTheService;
     private int counter = 0;
 
-    public Service() {
+    public TheService() {
         super();
     }
 
@@ -32,9 +35,10 @@ public class Service extends android.app.Service {
     public void onCreate() {
         super.onCreate();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d("SANJA", "The Service->On Create");
             restartForeground();
         }
-        mCurrentService = this;
+        mCurrentTheService = this;
     }
 
     // start the timer which will print the value of the counter every second
@@ -58,7 +62,24 @@ public class Service extends android.app.Service {
             restartForeground();
         }
 
-        startTimer();
+
+        //CHECK WITH CONNECTIVITY MANAGER
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        try{
+            if(networkInfo != null && networkInfo.isConnected())
+            {
+                startTimer();
+            }
+            else
+            {
+                Log.d(TAG, "Problems with internet connection!");
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
 
         // return start sticky so if it is killed by android, it will be restarted with Intent null
         return START_STICKY;
@@ -103,7 +124,7 @@ public class Service extends android.app.Service {
         // restart the never ending service
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
-        stoptimertask();
+        stoptimertask(); //startTimer();
     }
 
 
@@ -156,7 +177,8 @@ public class Service extends android.app.Service {
         Log.i(TAG, "initialising TimerTask");
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("in timer", "in timer ++++  " + (counter++));
+                //Log.i("in timer", "in timer ++++  " + (counter++));
+                new GetJobs(getApplicationContext()).execute();
             }
         };
     }
@@ -172,12 +194,12 @@ public class Service extends android.app.Service {
         }
     }
 
-    public static Service getmCurrentService() {
-        return mCurrentService;
+    public static TheService getmCurrentService() {
+        return mCurrentTheService;
     }
 
-    public static void setmCurrentService(Service mCurrentService) {
-        Service.mCurrentService = mCurrentService;
+    public static void setmCurrentService(TheService mCurrentTheService) {
+        TheService.mCurrentTheService = mCurrentTheService;
     }
 
 

@@ -28,7 +28,7 @@ public class ProcessMainClass {
 
     private void setServiceIntent(Context context) {
         if (serviceIntent == null) {
-            serviceIntent = new Intent(context, Service.class);
+            serviceIntent = new Intent(context, TheService.class);
         }
     }
     /**
